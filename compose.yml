@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  bazaar-updater:
+    build: ./bazaar-updater
+    image: skyblock/bazaar-updater
+    container_name: bazaar-updater
+    env_file:
+      - path: global.env
+        required: true
+      - path: bazaar-updater/.env
+        required: false
+    restart: always
+    environment:
+      API_SERVER: 'http://data-manager/bazaar'
+
+  data-manager:
+    build: ./data-manager
+    image: skyblock/data-manager
+    container_name: data-manager
+    env_file:
+      - path: global.env
+        required: true
+      - path: data-manager/.env
+        required: false
+    restart: always
+    environment:
+      FILE_SERVER: 'http://simple-file-server'
+
+  simple-file-server:
+    build: ./simple-file-server
+    image: skyblock/simple-file-server
+    container_name: simple-file-server
+    env_file:
+      - path: global.env
+        required: true
+      - path: simple-file-server/.env
+        required: false
+    restart: always
+    ports:
+      - '3000:80'
+    volumes:
+      - api-data:/files
+
+volumes:
+  api-data:
+
+networks:
+  default:
+    name: ninja-api
+    external: true
