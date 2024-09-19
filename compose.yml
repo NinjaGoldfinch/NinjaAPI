@@ -26,6 +26,7 @@ services:
     restart: always
     environment:
       FILE_SERVER: 'http://simple-file-server'
+      WEBSOCKET_SERVER: 'websocket-manager'
 
   simple-file-server:
     build: ./simple-file-server
@@ -41,6 +42,20 @@ services:
       - '3000:80'
     volumes:
       - api-data:/files
+
+  websocket-manager:
+    build: ./websocket-manager
+    image: skyblock/websocket-manager
+    container_name: websocket-manager
+    env_file:
+      - path: global.env
+        required: true
+      - path: websocket-manager/.env
+        required: false
+    restart: always
+    ports:
+      - '8080:80'
+
 
 volumes:
   api-data:
